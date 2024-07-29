@@ -12,12 +12,13 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
+    @post.user_id = current_user.id
 
     if @post.save
       redirect_to posts_path, notice: 'Post was successfully created.'
     else
-      flash.now[:alert] = 'Unable to save Post.'
-      render :new, status: :unprocessable_entity 
+      flash.now[:error] = @post.errors.full_messages.to_sentence
+      render :new, status: :unprocessable_entity
     end
   end
 
