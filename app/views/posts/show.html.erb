@@ -1,18 +1,16 @@
+<% if user_signed_in? %>
+<h3> <%= current_user.username %> <h3>
+<% end %>
+
+
 <h1> <%= @post.title %> </h1>
 
 <p> <%= @post.body %> </p>
 
-<% if false %>
-<ul>
-  <li><%= link_to "Edit", edit_article_path(@article) %></li>
-  <li><%= link_to 'Back to Articles', articles_path %></li>
-  <li>
-    <%= 
-    link_to "Destroy", article_path(@article), data: {
-                    turbo_method: :delete,
-                    turbo_confirm: "Are you sure?"
-                  } 
-    %>
-  </li>
-</ul>
+<% if user_signed_in? %>
+<p> by <%= @post.user.username %> </p>
+<%= button_to "Sign out", destroy_user_session_path, method: :delete %>
+<% else %>
+<p> by anonymous <p>
+<%= button_to "Log in", new_user_session_path %>
 <% end %>

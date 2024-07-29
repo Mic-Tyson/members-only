@@ -5,4 +5,16 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   validates :username, presence: true, uniqueness: true, length: { in: 3..20 }
   has_many :posts, dependent: :destroy
+
+  attr_accessor :login
+
+  def self.find_for_database_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    if (login = conditions.delete(:login))
+      where(conditions.to_h)
+        .where(['lower(username) = :value OR lower(email) = :value', { value: login.downcase }]).first
+    elsif conditions[:email].present?
+      where(conditions.to_h).where(['lower(email) = :value', { value: conditions[:email].downcase }]).first
+    end
+  end
 end
